@@ -1,7 +1,10 @@
 package ch.vorburger.maven.bulk;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+
+import org.apache.maven.plugin.logging.Log;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
@@ -26,20 +29,41 @@ public class MvnInstallDeployGenerator {
 		this.outDir = outDir;
 	}
 
-	public void generate() throws IOException {
+	public MvnInstallDeployGenerator(File baseDirToScan, String groupID, String version, File outDir) {
+		this(baseDirToScan.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				boolean isJAR = name.endsWith(".jar");
+				if (!isJAR)
+					System.err.println("Skipping non-JAR: " + name);
+				return isJAR;
+			}
+		}), groupID, version, outDir);
+	}
+
+	/**
+	 * Generate 2x pom.xml.
+	 */
+	public void generate(Log log) throws IOException {
 //		CharSequence mvnInstallFile = generateMvnInstallFilesScript();
 //		File mvnInstallFileUnixScriptFile = new File(outDir, "mvn_install-files.sh");
 //		Files.write(mvnInstallFile, mvnInstallFileUnixScriptFile, Charsets.UTF_8);
 //		mvnInstallFileUnixScriptFile.setExecutable(true, false);
 		
-		CharSequence pom = new POMGenerator().pom(jars, groupID, version);
-		File pomFile = new File(outDir, "pom.xml");
-		Files.write(pom, pomFile, Charsets.UTF_8);
+		CharSequence installDeployPom = new InstallDeployPOMGenerator(jars, groupID, version).pom();
+		File installDeployPomFile = new File(outDir, "pom-install-deploy.xml");
+		Files.write(installDeployPom, installDeployPomFile, Charsets.UTF_8);
+		log.info("Generated " + installDeployPomFile.toString());
+		
+		CharSequence dependenciesPom = new DependenciesPOMGenerator(jars, groupID, version).pom();
+		File dependenciesPomFile = new File(outDir, "pom-dependencies.xml");
+		Files.write(dependenciesPom, dependenciesPomFile, Charsets.UTF_8);
+		log.info("Generated " + dependenciesPomFile.toString());
 	}
 
 	/**
 	 * For a lot of JARs - this approach is SLOW!
-	 * Therefore this currently isn't actually used; the POMGenerator is the much better approach.
+	 * Therefore this currently isn't actually used; the InstallDeployPOMGenerator is the much better approach.
 	 * 
 	 * mvn install:install-file -Dfile=<path-to-file> -DgroupId=<group-id> -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=<packaging>
 	 */

@@ -1,8 +1,9 @@
 package ch.vorburger.maven.bulk;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
+
+import org.apache.maven.plugin.logging.SystemStreamLog;
 
 /**
  * Main entry point with the main() method - what a surprise.
@@ -21,17 +22,7 @@ public class Main {
 		String version = args[2];
 		File outDir = new File(args[3]);
 		
-		File[] jars = baseDirToScan.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				boolean isJAR = name.endsWith(".jar");
-				if (!isJAR)
-					System.err.println("Skipping non-JAR: " + name);
-				return isJAR;
-			}
-		});
-		
-		new MvnInstallDeployGenerator(jars, groupID, version, outDir).generate();
+		new MvnInstallDeployGenerator(baseDirToScan, groupID, version, outDir).generate(new SystemStreamLog());
 	}
 	
 }
