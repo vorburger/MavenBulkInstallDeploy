@@ -6,6 +6,7 @@
 	<groupId>ch.vorburger.maven</groupId>
 	<artifactId>bulk</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
+	<packaging>maven-plugin</packaging>
 
 	<name>ch.vorburger.maven.bulk</name>
 	<description>Bulk tools for 3rd-party JAR install &amp; deploy</description>

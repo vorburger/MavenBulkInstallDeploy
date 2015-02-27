@@ -39,6 +39,7 @@ public class MvnInstallDeployGenerator {
 
 	/**
 	 * For a lot of JARs - this approach is SLOW!
+	 * Therefore this currently isn't actually used; the POMGenerator is the much better approach.
 	 * 
 	 * mvn install:install-file -Dfile=<path-to-file> -DgroupId=<group-id> -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=<packaging>
 	 */
