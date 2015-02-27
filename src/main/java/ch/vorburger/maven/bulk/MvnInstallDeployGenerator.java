@@ -27,16 +27,22 @@ public class MvnInstallDeployGenerator {
 	}
 
 	public void generate() throws IOException {
-		CharSequence mvnInstallFile = generateInstallFile();
-		File mvnInstallFileUnixScriptFile = new File(outDir, "mvn_install-files.sh");
-		Files.write(mvnInstallFile, mvnInstallFileUnixScriptFile, Charsets.UTF_8);
-		mvnInstallFileUnixScriptFile.setExecutable(true, false);
+//		CharSequence mvnInstallFile = generateMvnInstallFilesScript();
+//		File mvnInstallFileUnixScriptFile = new File(outDir, "mvn_install-files.sh");
+//		Files.write(mvnInstallFile, mvnInstallFileUnixScriptFile, Charsets.UTF_8);
+//		mvnInstallFileUnixScriptFile.setExecutable(true, false);
+		
+		CharSequence pom = new POMGenerator().pom(jars, groupID, version);
+		File pomFile = new File(outDir, "pom.xml");
+		Files.write(pom, pomFile, Charsets.UTF_8);
 	}
 
 	/**
+	 * For a lot of JARs - this approach is SLOW!
+	 * 
 	 * mvn install:install-file -Dfile=<path-to-file> -DgroupId=<group-id> -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=<packaging>
 	 */
-	public CharSequence generateInstallFile() {
+	protected CharSequence generateMvnInstallFilesScript() {
 		StringBuilder sb = new StringBuilder();
 		for (File jar : jars) {
 			sb.append("mvn install:install-file -Dfile=");
