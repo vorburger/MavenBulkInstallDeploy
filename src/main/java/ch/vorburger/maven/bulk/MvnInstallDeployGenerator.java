@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 import com.google.common.base.Charsets;
@@ -22,15 +23,18 @@ public class MvnInstallDeployGenerator {
 	private final String version;
 	private final File outDir;
 	
-	public MvnInstallDeployGenerator(final File[] jars, String groupID, String version, File outDir) {
+	public MvnInstallDeployGenerator(final File[] jars, String groupID, String version, File outDir) throws MojoExecutionException {
 		this.jars = ImmutableList.copyOf(jars);
 		this.groupID = groupID;
 		this.version = version;
 		this.outDir = outDir;
+		
+		outDir.mkdirs();
+		checkDir(outDir);
 	}
 
-	public MvnInstallDeployGenerator(File baseDirToScan, String groupID, String version, File outDir) {
-		this(baseDirToScan.listFiles(new FilenameFilter() {
+	public MvnInstallDeployGenerator(File baseDirToScan, String groupID, String version, File outDir) throws MojoExecutionException {		
+		this(checkDir(baseDirToScan).listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				boolean isJAR = name.endsWith(".jar");
@@ -39,6 +43,12 @@ public class MvnInstallDeployGenerator {
 				return isJAR;
 			}
 		}), groupID, version, outDir);
+	}
+
+	private static File checkDir(File directory) throws MojoExecutionException {
+		if (!directory.exists() || !directory.isDirectory())
+			throw new MojoExecutionException("Directory does not exist (or is not a directory): " + directory.toString());
+		return directory;
 	}
 
 	/**

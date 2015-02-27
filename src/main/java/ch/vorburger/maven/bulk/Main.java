@@ -1,7 +1,6 @@
 package ch.vorburger.maven.bulk;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
@@ -12,7 +11,7 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
  */
 public class Main {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		if (args.length != 4) {
 			System.out.println("USAGE: <directory-to-scan-for-JARs> <group-id> <version> <output-directory>");
 		}
