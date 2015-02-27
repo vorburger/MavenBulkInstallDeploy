@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -35,6 +36,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<xtend.version>2.7.3</xtend.version>
 	</properties>
 
 	<build>
@@ -44,6 +46,25 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>xtend-maven-plugin</artifactId>
+				<version>${xtend.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>testCompile</goal>
+							<goal>xtend-install-debug-info</goal>
+							<goal>xtend-test-install-debug-info</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<outputDirectory>${project.build.directory}/xtend-gen/main</outputDirectory>
+					<testOutputDirectory>${project.build.directory}/xtend-gen/test</testOutputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -65,7 +86,7 @@
 		<dependency>
 			<groupId>org.eclipse.xtend</groupId>
 			<artifactId>org.eclipse.xtend.lib</artifactId>
-			<version>2.7.3</version>
+			<version>${xtend.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
